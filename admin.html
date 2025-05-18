@@ -1,0 +1,91 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Movies - Admin Management</title>
+    <link href="CSS/notifIt.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/slim-select@2.8.0/dist/slimselect.min.css" rel="stylesheet">
+    <!--link to jquery ui styles-->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <link href="CSS/styles.css" rel="stylesheet" />
+    <!--link to font awesome icons-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+          integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!--link to jquery-->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!--link to jquery ui plugins-->
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slim-select@2.8.0/dist/slimselect.min.js"></script>
+    <script src="JS/notifIt.min.js"></script>
+    <script src="JS/utils.js?v=8"></script>
+    <script src="JS/script.js?v=8"></script>
+
+    <script>
+        $(document).ready(init);
+        function init() {
+            if (!checkLoggedInUser()) return;
+            displayLoggedInUserName();
+            renderUsers();
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="main-menu">
+                <a id="homeItem" href="index.html">
+                    <i class="fa-solid fa-house fa-lg"></i>
+                    <span>Home</span>
+                </a>
+                <a id="myMoviesItem" href="myMovies.html">
+                    <i class="fa-solid fa-film fa-lg"></i>
+                    <span>My Movies</span>
+                </a>
+                <a id="addMoviesItem" href="addMovies.html">
+                    <i class="fa-solid fa-plus fa-lg"></i>
+                    <span>Add Movies</span>
+                </a>
+                <a id="myProfileItem" href="myProfile.html">
+                    <i class="fa-regular fa-id-card fa-lg"></i>
+                    <span>My Profile</span>
+                </a>
+                <a id="adminItem" href="admin.html" class="active">
+                    <i class="fa-solid fa-user-tie fa-lg"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+            <div class="user-menu">
+                <div>
+                    <i class="fa-regular fa-circle-user fa-xl"></i>
+                </div>
+                <div class="user-name" id="userNameDiv"></div>
+                <a class="user-log-out" onclick="logoutUser()">Log out</a>
+            </div>
+        </nav>
+        <header>
+            <h2>Admin Management</h2>
+        </header>
+        <main>
+            <div class="usersContainer">
+                <table id="userTable" class="user-table">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- User data will be populated here by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+        </main>
+        <footer>
+            <p>© 2025 All rights reserved</p>
+        </footer>
+    </div>
+</body>
+</html>

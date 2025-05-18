@@ -1,0 +1,67 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Movies - Login</title>
+    <link href="CSS/styles.css" rel="stylesheet" />
+    <link href="CSS/notifIt.min.css" rel="stylesheet" />
+    <!--link to font awesome icons-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+          integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="JS/notifIt.min.js"></script>
+    <script src="JS/utils.js?v=8"></script>
+    <script src="JS/script.js?v=8"></script>
+    <script>
+
+        $(document).ready(function () {
+            $("#loginForm").submit(loginUser); // bind the submit event to a function called loginUser
+            $("#registerForm").submit(registerUser);
+            $("#nameInput").on("change", handleNameChange);
+            $("#passwordInput").on("change", handlePasswordChange);
+            showLoginSection();
+        });
+
+    </script>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Movies</h1>
+        <div id="loginDiv">
+            <form id="loginForm">
+                <div class="box login-box">
+                    <h2>Log into Movies</h2>
+                    <input type="email" id="userEmailInput" placeholder="Please enter your email" required
+                           oninvalid="this.setCustomValidity('Email must be specified!)"
+                           oninput="this.setCustomValidity('')" />
+                    <input type="password" id="userPasswordInput" placeholder="Please enter your password" required
+                           oninvalid="this.setCustomValidity('Password must be specified!')"
+                           oninput="this.setCustomValidity('')" />
+                    <button type="submit" class="btn-primary">Log In</button>
+                    <div class="links">
+                        <a onclick="showRegistrationSection()">Register</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="registerDiv">
+            <form id="registerForm">
+                <div class="box login-box">
+                    <h2>Register to Movies</h2>
+                    <input type="text" id="nameInput" placeholder="Please enter your name" required 
+                           oninput="this.setCustomValidity('')" />
+                    <input type="email" id="emailInput" placeholder="Please enter your email" required
+                           oninput="this.setCustomValidity('')" />
+                    <input type="password" id="passwordInput" placeholder="Please enter your password" required
+                           oninput="this.setCustomValidity('')" />
+                    <button type="submit" class="btn-primary">Register</button>
+                    <div class="links">
+                        <a onclick="showLoginSection()">Back to login</a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

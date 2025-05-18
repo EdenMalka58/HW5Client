@@ -1,0 +1,181 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Movies - Add Movies</title>
+    <link href="CSS/notifIt.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/slim-select@2.8.0/dist/slimselect.min.css" rel="stylesheet">
+    <!--link to jquery ui styles-->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <link href="CSS/styles.css" rel="stylesheet" />
+    <!--link to font awesome icons-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+          integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!--link to jquery-->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!--link to jquery ui plugins-->
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/slim-select@2.8.0/dist/slimselect.min.js"></script>
+    <script src="JS/notifIt.min.js"></script>
+    <script src="JS/utils.js?v=8"></script>
+    <script src="JS/script.js?v=8"></script>
+
+    <script>
+        $(document).ready(init);
+        function init() {
+            if (!checkLoggedInUser()) return;
+            checkAdminMenuItem();
+            displayLoggedInUserName();
+            fillLanguagesDatalist();
+            fillGenresDatalist();
+            $("#addMoviesForm").submit(addMovie);
+
+            $("#releaseDateInput").datepicker({
+                showAnim: 'slideDown',
+                showButtonPanel: true,
+                maxDate: new Date()
+            }).on("change", handleReleaseDateChange);
+
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="main-menu">
+                <a id="homeItem" href="index.html">
+                    <i class="fa-solid fa-house fa-lg"></i>
+                    <span>Home</span>
+                </a>
+                <a id="myMoviesItem" href="myMovies.html">
+                    <i class="fa-solid fa-film fa-lg"></i>
+                    <span>My Movies</span>
+                </a>
+                <a id="addMoviesItem" href="addMovies.html" class="active">
+                    <i class="fa-solid fa-plus fa-lg"></i>
+                    <span>Add Movies</span>
+                </a>
+                <a id="myProfileItem" href="myProfile.html">
+                    <i class="fa-regular fa-id-card fa-lg"></i>
+                    <span>My Profile</span>
+                </a>
+                <a id="adminItem" href="admin.html" class="hide">
+                    <i class="fa-solid fa-user-tie fa-lg"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+            <div class="user-menu">
+                <div>
+                    <i class="fa-regular fa-circle-user fa-xl"></i>
+                </div>
+                <div class="user-name" id="userNameDiv"></div>
+                <a class="user-log-out" onclick="logoutUser()">Log out</a>
+            </div>
+        </nav>
+        <header>
+            <h2>Add Movies</h2>
+        </header>
+        <main>
+            <div class="add-movies-container">
+                <form id="addMoviesForm" class="add-movies-form">
+                    <div class="box add-movies-box">
+                        <h2>Enter movie details</h2>
+                        <div class="fields-box">
+
+                            <div class="row">
+                                <div>
+                                    <label for="primaryTitleInput">Title</label>
+                                    <input type="text" id="primaryTitleInput" placeholder="Enter title" required
+                                           oninvalid="this.setCustomValidity('Primary title must be specified!')"
+                                           oninput="this.setCustomValidity('')" />
+                                </div>
+                                <div>
+                                    <label for="yearInput">Year</label>
+                                    <input type="number" id="yearInput" min="1880" max="2040" maxlength="4" placeholder="Enter year" required
+                                           oninvalid="this.setCustomValidity('Please enter a valid year!')"
+                                           oninput="this.setCustomValidity('')" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div>
+                                    <label for="descriptionInput">Description</label>
+                                    <textarea rows="6" id="descriptionInput" placeholder="Enter a brief synopsis of the movie..."></textarea>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div>
+                                    <label for="urlInput">Website URL</label>
+                                    <input type="url" id="urlInput" placeholder="https://example.com/movie" />
+                                </div>
+                                <div>
+                                    <label for="primaryImageInput">Image URL</label>
+                                    <input type="url" id="primaryImageInput" placeholder="https://example.com/image.jpg" required
+                                           oninvalid="this.setCustomValidity('Please enter a valid image url!')"
+                                           oninput="this.setCustomValidity('')" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div>
+                                    <label for="releaseDateInput">Release date</label>
+                                    <input type="text" id="releaseDateInput" placeholder="Select release date" required
+                                           oninput="this.setCustomValidity('')" />
+                                </div>
+                                <div>
+                                    <label for="languageInput">Language</label>
+                                    <input list="languages" type="text" id="languageInput" placeholder="Select language" required
+                                           oninvalid="this.setCustomValidity('Language must be specified!')"
+                                           oninput="this.setCustomValidity('')" />
+                                    <datalist id="languages"></datalist>
+                                </div>
+                            </div>
+                            <div class="checkbox-row">
+                                <input type="checkbox" id="isAdultInput" />
+                                <label for="isAdultInput">Is adult?</label>
+                            </div>
+                            <div class="row">
+                                <div>
+                                    <label for="runtimeMinutesInput">Runtime minutes</label>
+                                    <input type="number" id="runtimeMinutesInput" min="0" max="1000" placeholder="Enter runtime minutes" required
+                                           oninvalid="this.setCustomValidity('Runtime minutes must be specified!')"
+                                           oninput="this.setCustomValidity('')" />
+                                </div>
+                                <div>
+                                    <label for="genresSelect">Genres</label>
+                                    <span>
+                                        <select id="genresSelect" multiple></select>
+                                    </span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div>
+                                    <label for="budgetInput">Budget ($)</label>
+                                    <input type="number" id="budgetInput" min="100000" step="any" placeholder="Enter budget" />
+                                </div>
+                                <div>
+                                    <label for="grossWorldwideInput">Gross worldwide ($)</label>
+                                    <input type="number" id="grossWorldwideInput" value="0" min="0" step="any" placeholder="Enter gross worldwide" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div>
+                                    <label for="averageRatingInput">Average rating</label>
+                                    <input type="number" id="averageRatingInput" value="0" min="0" max="10" step="any" placeholder="Enter average rating" />
+                                </div>
+                                <div>
+                                    <label for="numVotesInput">Number of votes</label>
+                                    <input type="number" id="numVotesInput" value="0" min="0" max="300" placeholder="Enter number of votes" />
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Add</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </main>
+        <footer>
+            <p>© 2025 All rights reserved</p>
+        </footer>
+    </div>
+</body>
+</html>

@@ -1,0 +1,182 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Movies - Home</title>
+    <link href="CSS/styles.css" rel="stylesheet" />
+    <link href="CSS/notifIt.min.css" rel="stylesheet" />
+    <!--link to jquery ui styles-->
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.14.1/themes/base/jquery-ui.css">
+    <!--link to font awesome icons-->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.1/css/all.min.css"
+          integrity="sha512-5Hs3dF2AEPkpNAR7UiOHba+lRSJNeM2ECkwxUIxC1Q/FLycGTbNapWXB4tP889k5T5Ju8fs4b1P5z/iB4nMfSQ=="
+          crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <!--link to jquery ui plugins-->
+    <script src="https://code.jquery.com/ui/1.14.1/jquery-ui.js"></script>
+    <script src="JS/notifIt.min.js"></script>
+    <script src="JS/utils.js?v=8"></script>
+    <script src="JS/script.js?v=8"></script>
+
+    <script>
+        $(document).ready(init);
+
+        function init() {
+            checkAdminMenuItem();
+            displayLoggedInUserName();
+            loadMoviesFromServer();
+            $("#startDateInput").datepicker({
+                showAnim: 'slideDown',
+                showButtonPanel: true,
+                maxDate: new Date(),
+                onSelect: function (selectedDate) {
+                    // Set the minDate for endDate based on startDate
+                    $("#endDateInput").datepicker("option", "minDate", selectedDate);
+                }
+            });
+            $("#endDateInput").datepicker({
+                showAnim: 'slideDown',
+                showButtonPanel: true,
+                maxDate: new Date(),
+            });
+
+
+
+            $("#rentStartDate").datepicker({
+                showOn: 'button',
+                showAnim: 'slideDown',
+                showButtonPanel: true,
+                minDate: new Date(),
+                defaultDate: new Date(),
+                onSelect: function (selectedDate) {
+                    // Set the minDate for endDate based on startDate
+                    $("#rentEndDate").datepicker("option", "minDate", selectedDate);
+                    updateRentTotalPrice(selectedDate, $("#rentEndDate").val());
+                    $("#rentStartDate")[0].setCustomValidity('');
+                }
+            }).on('change', function () {
+                updateRentTotalPrice($("#rentStartDate").val(), $("#rentEndDate").val());
+            });
+
+            $("#rentEndDate").datepicker({
+                showOn: 'button',
+                showAnim: 'slideDown',
+                showButtonPanel: true,
+                onSelect: function (selectedDate) {
+                    updateRentTotalPrice($("#rentStartDate").val(), selectedDate);
+                    $("#rentEndDate")[0].setCustomValidity('');
+                }
+            }).on('change', function () {
+                updateRentTotalPrice($("#rentStartDate").val(), $("#rentEndDate").val());
+            });
+
+            rentMovieDialog = $("#dialog-form").dialog({
+                resizable: false,
+                autoOpen: false,
+                height: 400,
+                width: 500,
+                modal: true,
+                close: function () {
+                    form[0].reset();
+                }
+            });
+
+            const form = rentMovieDialog.find("form").submit(rentMovie);
+        }
+    </script>
+
+</head>
+<body>
+    <div class="container">
+        <nav>
+            <div class="main-menu">
+                <a id="homeItem" href="index.html" class="active">
+                    <i class="fa-solid fa-house fa-lg"></i>
+                    <span>Home</span>
+                </a>
+                <a id="myMoviesItem" href="myMovies.html">
+                    <i class="fa-solid fa-film fa-lg"></i>
+                    <span>My Movies</span>
+                </a>
+                <a id="addMoviesItem" href="addMovies.html">
+                    <i class="fa-solid fa-plus fa-lg"></i>
+                    <span>Add Movies</span>
+                </a>
+                <a id="myProfileItem" href="myProfile.html">
+                    <i class="fa-regular fa-id-card fa-lg"></i>
+                    <span>My Profile</span>
+                </a>
+                <a id="adminItem" href="admin.html" class="hide">
+                    <i class="fa-solid fa-user-tie fa-lg"></i>
+                    <span>Admin</span>
+                </a>
+            </div>
+            <div id="userMenu" class="user-menu">
+                <div>
+                    <i class="fa-regular fa-circle-user fa-xl"></i>
+                </div>
+                <div class="user-name" id="userNameDiv"></div>
+                <a class="user-log-out" onclick="logoutUser()">Log out</a>
+            </div>
+        </nav>
+        <header>
+            <h2>All Movies</h2>
+        </header>
+        <main>
+            <div class="toolBar">
+                <div class="searchByTitle">
+                    <input id="titleInput" type="search" placeholder="Search by title" />
+                    <button onclick="handleTitleButtonClick()" title="Search" class="btn-primary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </div>
+                <div class="searchByDates">
+                    <input id="startDateInput" type="text" placeholder="From date" />
+                    <input id="endDateInput" type="text" placeholder="To date" />
+                    <button onclick="handleDatesButtonClick()" title="Search" class="btn-primary">
+                        <i class="fa-solid fa-search"></i>
+                    </button>
+                </div>
+
+                <div class="refreshSearch">
+                    <button onclick="refreshMyMovies()" title="Reset and refresh search" class="btn-secondary">
+                        <i class="fa-solid fa-refresh"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+            <div id="cardsContainer" class="cards"></div>
+
+            <!--rent a movie form dialog-->
+            <div id="dialog-form" title="Rent a movie">
+                <p id="dialogTitle" class="dialog-title"></p>
+                <form>
+                    <fieldset class="dialog-fieldset">
+                        <label class="dialog-label" for="rentStartDate">From date</label>
+                        <div class="dialog-date-field">
+                            <input class="dialog-input" type="text" id="rentStartDate" required
+                                   oninvalid="this.setCustomValidity('From date must be specified!')"
+                                   oninput="this.setCustomValidity('')">
+                        </div>
+                        <label class="dialog-label" for="rentEndDate">To date</label>
+                        <div class="dialog-date-field">
+                            <input class="dialog-input" type="text" id="rentEndDate" required
+                                   oninvalid="this.setCustomValidity('To date must be specified!')"
+                                   oninput="this.setCustomValidity('')">
+                        </div>
+                        <label class="dialog-label" id="rentTotalPrice">Total price: 0$</label>
+                        <hr class="divider"/>
+                        <button type="submit" class="btn-primary">Rent movie</button>
+                        <button type="button" class="btn-secondary" onclick="closeRentMovieDialog()">Cancel</button>
+                    </fieldset>
+                </form>
+            </div>
+
+        </main>
+        <footer>
+            <p>© 2025 All rights reserved</p>
+        </footer>
+    </div>
+
+</body>
+</html>
