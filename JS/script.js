@@ -438,9 +438,9 @@ function getLoggedInUser() {
     return getLocalStorage(LOGGED_IN_USER_STORAGE_KEY);
 }
 
-function checkLoggedInUser() {
+function checkLoggedInUser(checkAdmin = false) {
     const loggedInUser = getLoggedInUser();
-    if (!loggedInUser) {
+    if (!loggedInUser || (checkAdmin && !loggedInUser.admin)) {
         logoutUser();
         return false;
     }
